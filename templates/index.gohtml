@@ -1,0 +1,35 @@
+<!-- Front -->
+{{ define "front" }}
+<div class="page previous">{{ template "page" .Previous }}</div>
+{{ end }}
+
+<!-- Back -->
+{{ define "back" }}
+<div class="page previous">{{ template "page" .Previous }}</div>
+<div class="page current">{{ template "page" .Current }}</div>
+<div class="page next">{{ template "page" .Next}}</div>
+{{ end }}
+
+<!-- Page -->
+{{ define "page" }}
+<!-- Normal -->
+{{ if eq .Type 0 }}
+<img alt="Page {{ .Number }}" src="{{ .Path }}" />
+{{ end }}
+
+<!-- Special -->
+{{ if eq .Type 1 }}
+<span> Page {{ .Number }} </span>
+{{ end }}
+
+<!-- Opening -->
+{{ if eq .Type 2 }}
+<span> The Opening Of The Qurʾān </span>
+{{ end }}
+
+<!-- Conclusion -->
+{{ if eq .Type 3 }}
+<span> The Conclusion Of The Qurʾān </span>
+{{ end }}
+<!--  -->
+{{ end }}

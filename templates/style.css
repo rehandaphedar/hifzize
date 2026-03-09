@@ -1,0 +1,26 @@
+html {
+	overflow-y: scroll;
+	text-align: center;
+}
+
+.page {
+	margin: 4px auto;
+}
+
+.previous img {
+	mask-image: linear-gradient(
+		to bottom,
+		transparent 0%,
+		transparent 50%,
+		black 90%
+	);
+}
+
+.next img {
+	mask-image: linear-gradient(
+		to bottom,
+		black 10%,
+		transparent 50%,
+		transparent 100%
+	);
+}
