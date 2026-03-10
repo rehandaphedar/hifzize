@@ -16,8 +16,8 @@ import (
 )
 
 func main() {
-	images := flag.String("images", "images/%03d.png", "Location of image files. %d is replaced with the page number.")
-	imagesInCollection := flag.String("images-in-collection", "quran_page_%03d.png", "Location of image files in the collection. %d is replaced with the page number.")
+	images := flag.String("images", "images/hafs_wasat_604/%03d.png", "Location of image files. %d is replaced with the page number.")
+	imagesInCollection := flag.String("images-in-collection", "hifzize-hafs_wasat_604-%03d.png", "Location of image files in the collection. %d is replaced with the page number.")
 	specialPagesStr := flag.String("special-pages", "1,2", "Special pages (Will be rendered as just \"Page N\" when not the primary page)")
 
 	modelId := flag.Int64("model-id", int64(1109290091), "ID of the model")
@@ -27,7 +27,7 @@ func main() {
 	deckName := flag.String("deck-name", "hifzize", "Name of the peck")
 	deckDescription := flag.String("deck-description", "Recall the current page and the beginning of the next page.", "Description of the deck")
 
-	outputPath := flag.String("output", "out/hifzize.apkg", "Output filepath")
+	outputPath := flag.String("output", "out/hifzize-hafs_wasat_604.apkg", "Output filepath")
 
 	templateHtmlPath := flag.String("template-html", "templates/index.gohtml", "Path to template file")
 	templateCssPath := flag.String("template-css", "templates/style.css", "Path to CSS file")
