@@ -25,7 +25,7 @@ func main() {
 
 	deckId := flag.Int64("deck-id", int64(1816673620), "ID of the deck")
 	deckName := flag.String("deck-name", "hifzize", "Name of the peck")
-	deckDescription := flag.String("deck-description", "Recall the current page and the beginning of the next page.", "Description of the deck")
+	deckDescription := flag.String("deck-description", "Recall the current page and the beginning of the next page. Based on the 604 pages Ḥafṣ Wasaṭ Muṣḥaf.", "Description of the deck")
 
 	outputPath := flag.String("output", "out/hifzize-hafs_wasat_604.apkg", "Output filepath")
 
