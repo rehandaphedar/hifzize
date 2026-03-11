@@ -22,10 +22,10 @@ The documentation for usage and flags can be accessed by running `hifzize -h`.
 - The `-layout` data can be obtained from QUL's [Mushaf Layout Resources](https://qul.tarteel.ai/resources/mushaf-layout)
 - The `-metadata-*` can be obtained from QUL's [Quran data, surahs, ayahs, words, juz etc.](https://qul.tarteel.ai/resources/quran-metadata)
 
-The page images for the default deck are extracted using `pdfimages` from [the KFGQPC website](https://qurancomplex.gov.sa/), specifically the 640 pages version of Al-Muṣḥaf Al-Wasaṭ of the Ḥafṣ Qirāʿah. The reasons for this choice are:
+The page images for the default deck are extracted using `pdfimages` from [the KFGQPC website](https://qurancomplex.gov.sa/), specifically, the 604 pages version of Al-Muṣḥaf Al-Wasaṭ of the Ḥafṣ Qirāʿah. The reasons for this choice are:
 
 - Ḥafṣ is the most popular Qirāʿah.
-- Al-Muṣḥaf Al-Wasaṭ has a consistent "bounding box"/width for each page, which means that the page text is automatically aligned to the appropriate side. This is in contrast to Al-Muṣḥaf Al-ʿĀdī for example, in which the width of the page changes if there are juz/ḥizb markers on the side.
+- Normally, Al-Muṣḥaf Al-ʿĀdī would be used for the default deck, however, due to a peculiarity in its PDF, the width of the page image (extracted using `pdfimages` as mentioned before) changes if there are juz/ḥizb markers on the side. Thus, Al-Muṣḥaf Al-Wasaṭ has been used instead.
 
 You are free to use another Muṣḥaf and/or Qirāʿah to generate your own deck.
 
