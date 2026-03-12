@@ -29,8 +29,10 @@ func main() {
 
 	outputPath := flag.String("output", "out/hifzize-hafs_wasat_604.apkg", "Output filepath")
 
-	templateHtmlPath := flag.String("template-html", "templates/index.gohtml", "Path to template file")
-	templateCssPath := flag.String("template-css", "templates/style.css", "Path to CSS file")
+	templateHtmlPath := flag.String("template-html", "templates/index.gohtml", "Path to template HTML file")
+	templateCssPath := flag.String("template-css", "templates/style.css", "Path to template CSS file")
+	templateQfmtPath := flag.String("template-qfmt", "templates/qfmt.html", "Path to template Qfmt file")
+	templateAfmtPath := flag.String("template-afmt", "templates/afmt.html", "Path to template Afmt file")
 
 	templateFrontName := flag.String("template-front", "front", "Name of the front template")
 	templateBackName := flag.String("template-back", "back", "Name of the back template")
@@ -96,6 +98,15 @@ func main() {
 		log.Fatalf("build index: %v", err)
 	}
 
+	qfmt, err := readFile(*templateQfmtPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	afmt, err := readFile(*templateAfmtPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	css, err := readFile(*templateCssPath)
 	if err != nil {
 		log.Fatal(err)
@@ -112,10 +123,11 @@ func main() {
 		AddField(genanki.Field{Name: "Page"}).
 		AddField(genanki.Field{Name: "Front"}).
 		AddField(genanki.Field{Name: "Back"}).
+		AddField(genanki.Field{Name: "Notes"}).
 		AddTemplate(genanki.Template{
 			Name: "Page Recall",
-			Qfmt: "{{Front}}",
-			Afmt: "{{Back}}",
+			Qfmt: qfmt,
+			Afmt: afmt,
 		})
 	deck := genanki.NewDeck(*deckId, *deckName, *deckDescription)
 
@@ -208,6 +220,7 @@ func main() {
 				strconv.Itoa(pageNumber),
 				front,
 				back,
+				"",
 			},
 			pageTags,
 		)

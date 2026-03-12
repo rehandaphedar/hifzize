@@ -3,6 +3,14 @@ html {
 	text-align: center;
 }
 
+hr {
+	background: currentColor;
+	opacity: 0.2;
+	height: 2px;
+
+	border: none;
+}
+
 .page {
 	margin: 4px auto;
 }
