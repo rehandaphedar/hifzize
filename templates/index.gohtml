@@ -14,12 +14,12 @@
 {{ define "page" }}
 <!-- Normal -->
 {{ if eq .Type 0 }}
-<img alt="Page {{ .Number }}" src="{{ .Path }}" />
+<img class="normal" alt="Page {{ .Number }}" src="{{ .Path }}" />
 {{ end }}
 
 <!-- Special -->
 {{ if eq .Type 1 }}
-<span> Page {{ .Number }} </span>
+<img class="special" alt="Page {{ .Number }}" src="{{ .Path }}" />
 {{ end }}
 
 <!-- Opening -->

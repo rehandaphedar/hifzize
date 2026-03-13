@@ -15,7 +15,7 @@ hr {
 	margin: 4px auto;
 }
 
-.previous img {
+.previous img.normal {
 	mask-image: linear-gradient(
 		to bottom,
 		transparent 0%,
@@ -24,7 +24,7 @@ hr {
 	);
 }
 
-.next img {
+.next img.normal {
 	mask-image: linear-gradient(
 		to bottom,
 		black 10%,

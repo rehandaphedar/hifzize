@@ -18,7 +18,7 @@ import (
 func main() {
 	images := flag.String("images", "images/hafs_wasat_604/%03d.png", "Location of image files. %d is replaced with the page number.")
 	imagesInCollection := flag.String("images-in-collection", "hifzize-hafs_wasat_604-%03d.png", "Location of image files in the collection. %d is replaced with the page number.")
-	specialPagesStr := flag.String("special-pages", "1,2", "Special pages (Will be rendered as just \"Page N\" when not the primary page)")
+	specialPagesStr := flag.String("special-pages", "1,2", "Special pages (Will be rendered without mask even when not the current page. This behavior can be customised by editing the template.)")
 
 	modelId := flag.Int64("model-id", int64(1109290091), "ID of the model")
 	modelName := flag.String("model-name", "hifzize", "Name of the model")
