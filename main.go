@@ -224,6 +224,9 @@ func main() {
 			},
 			pageTags,
 		)
+
+		noteIdBase := fmt.Sprintf("%d_%d", model.ID, pageNumber)
+		note.ID = qul.GenerateID(noteIdBase)
 		deck.AddNote(note)
 	}
 
