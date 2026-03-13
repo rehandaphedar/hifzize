@@ -16,6 +16,7 @@ import (
 )
 
 func main() {
+	mushafId := flag.String("mushaf-id", "hafs_wasat_604", "A string uniquely identifying the mushaf. Used for generating note ids.")
 	images := flag.String("images", "images/hafs_wasat_604/%03d.png", "Location of image files. %d is replaced with the page number.")
 	imagesInCollection := flag.String("images-in-collection", "hifzize-hafs_wasat_604-%03d.png", "Location of image files in the collection. %d is replaced with the page number.")
 	specialPagesStr := flag.String("special-pages", "1,2", "Special pages (Will be rendered without mask even when not the current page. This behavior can be customised by editing the template.)")
@@ -225,7 +226,7 @@ func main() {
 			pageTags,
 		)
 
-		noteIdBase := fmt.Sprintf("%d_%d", model.ID, pageNumber)
+		noteIdBase := fmt.Sprintf("%d_%s_%d", model.ID, *mushafId, pageNumber)
 		note.ID = qul.GenerateID(noteIdBase)
 		deck.AddNote(note)
 	}
