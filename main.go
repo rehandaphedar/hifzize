@@ -182,12 +182,12 @@ func main() {
 
 		mediaFiles[imageFilePathCurrent] = imageFilePathInCollectionCurrent
 
-		if previous.Type == PageTypeNormal {
+		if (previous.Type == PageTypeNormal) || (previous.Type == PageTypeSpecial) {
 			imageFilePathInCollectionPrevious := fmt.Sprintf(*imagesInCollection, previous.Number)
 			previous.Path = imageFilePathInCollectionPrevious
 		}
 
-		if next.Type == PageTypeNormal {
+		if (next.Type == PageTypeNormal) || (next.Type == PageTypeSpecial) {
 			imageFilePathInCollectionNext := fmt.Sprintf(*imagesInCollection, next.Number)
 			next.Path = imageFilePathInCollectionNext
 		}
