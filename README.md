@@ -12,8 +12,6 @@ Due to deck size restrictions, it is not available on AnkiWeb yet.
 go install git.sr.ht/~rehandaphedar/hifzize@latest
 ```
 
-The package helps interact with the [Quranic Universal Library (QUL)](https://qul.tarteel.ai/resources/quran-metadata).
-
 # Usage
 
 The documentation for usage and flags can be accessed by running `hifzize -h`.
