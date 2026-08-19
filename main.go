@@ -6,13 +6,16 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"maps"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
 
-	"git.sr.ht/~rehandaphedar/genanki-go-utils/v2/pkg/qul"
+	"git.sr.ht/~rehandaphedar/genanki-go-utils/v4/pkg/qul"
 	"github.com/npcnixel/genanki-go"
+	"go.yaml.in/yaml/v4"
 )
 
 func main() {
@@ -28,6 +31,15 @@ func main() {
 	deckName := flag.String("deck-name", "hifzize", "Name of the peck")
 	deckDescription := flag.String("deck-description", "Recall the current page and the beginning of the next page. Based on the 604 pages Ḥafṣ Wasaṭ Muṣḥaf.", "Description of the deck")
 
+	deckJuzNameFormat := flag.String("deck-juz-name-format", "Juz %02d", "Format for the name of juz wise decks. %d is replaced with the juz number.")
+	deckHizbNameFormat := flag.String("deck-hizb-name-format", "Hizb %02d", "Format for the name of hizb wise decks. %d is replaced with the hizb number.")
+	deckRubNameFormat := flag.String("deck-rub-name-format", "Rub %03d", "Format for the name of rub wise decks. %d is replaced with the rub number.")
+	deckPageNameFormat := flag.String("deck-page-name-format", "Page %03d", "Format for the name of page wise decks. %d is replaced with the page number.")
+	deckJuzDescriptionFormat := flag.String("deck-juz-description-format", "Juz %02d", "Format for the description of juz wise decks. %d is replaced with the juz number.")
+	deckHizbDescriptionFormat := flag.String("deck-hizb-description-format", "Hizb %02d", "Format for the description of hizb wise decks. %d is replaced with the hizb number.")
+	deckRubDescriptionFormat := flag.String("deck-rub-description-format", "Rub %03d", "Format for the description of rub wise decks. %d is replaced with the rub number.")
+	deckPageDescriptionFormat := flag.String("deck-page-description-format", "Page %03d", "Format for the description of page wise decks. %d is replaced with the page number.")
+
 	outputPath := flag.String("output", "out/hifzize-hafs_wasat_604.apkg", "Output filepath")
 
 	templateHtmlPath := flag.String("template-html", "templates/index.gohtml", "Path to template HTML file")
@@ -40,6 +52,7 @@ func main() {
 
 	wordsPath := flag.String("words", "data/qpc-hafs-word-by-word.json", "Path to words data")
 	layoutPath := flag.String("layout", "data/qpc-v4-tajweed-15-lines.db", "Path to layout data")
+	phrasesPath := flag.String("phrases", "data/phrases.json", "Path to phrases data")
 	metadataAyahPath := flag.String("metadata-ayah", "data/quran-metadata-ayah.json", "Path to ayah metadata")
 	metadataJuzPath := flag.String("metadata-juz", "data/quran-metadata-juz.json", "Path to juz metadata")
 	metadataHizbPath := flag.String("metadata-hizb", "data/quran-metadata-hizb.json", "Path to hizb metadata")
@@ -57,15 +70,23 @@ func main() {
 	tagFormat.Rub = flag.String("tag-format-rub", "quran::rub::%03d", "Format of the rub tag. %d is replaced with the rub number.")
 	tagFormat.Manzil = flag.String("tag-format-manzil", "quran::manzil::%d", "Format of the manzil tag. %d is replaced with the manzil number.")
 	tagFormat.Ruku = flag.String("tag-format-ruku", "quran::ruku::%03d", "Format of the ruku tag. %d is replaced with the ruku number.")
+	tagFormat.Phrase = flag.String("tag-format-phrase", "quran::phrase::%d", "Format of the phrase tag. %d is replaced with the phrase id.")
+
+	mediaConfigPath := flag.String("media-config", "media/config.yaml", "Path to media config")
 
 	flag.Parse()
 
 	var words map[string]qul.Word
+	var phrases map[string]qul.Phrase
 	var metadataAyah map[string]qul.MetadataAyah
 
 	var metadataDivision qul.MetadataDivision
 
 	err := loadJSON(*wordsPath, &words)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = loadJSON(*phrasesPath, &phrases)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,9 +115,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	index, err := qul.BuildIndex(*layoutPath, words, metadataDivision, tagFormat)
+	index, err := qul.BuildIndex(words, *layoutPath, phrases, metadataDivision, tagFormat)
 	if err != nil {
 		log.Fatalf("build index: %v", err)
+	}
+
+	metadataAyahByVerseKey := make(map[string]qul.MetadataAyah)
+	for _, metadataAyahEntry := range metadataAyah {
+		metadataAyahByVerseKey[metadataAyahEntry.VerseKey] = metadataAyahEntry
 	}
 
 	qfmt, err := readFile(*templateQfmtPath)
@@ -130,7 +156,10 @@ func main() {
 			Qfmt: qfmt,
 			Afmt: afmt,
 		})
+
+	decksMap := map[int64]*genanki.Deck{}
 	deck := genanki.NewDeck(*deckId, *deckName, *deckDescription)
+	decksMap[*deckId] = deck
 
 	var specialPages []int
 	for specialPageStr := range strings.SplitSeq(*specialPagesStr, ",") {
@@ -152,16 +181,19 @@ func main() {
 
 	for pageNumber, pageTags := range index.Tag.Page {
 		current := Page{
-			Type:   PageTypeNormal,
-			Number: pageNumber,
+			Type:          PageTypeNormal,
+			Number:        pageNumber,
+			VersePosition: index.PageVerse[pageNumber],
 		}
 		previous := Page{
-			Type:   PageTypeNormal,
-			Number: pageNumber - 1,
+			Type:          PageTypeNormal,
+			Number:        pageNumber - 1,
+			VersePosition: index.PageVerse[pageNumber-1],
 		}
 		next := Page{
-			Type:   PageTypeNormal,
-			Number: pageNumber + 1,
+			Type:          PageTypeNormal,
+			Number:        pageNumber + 1,
+			VersePosition: index.PageVerse[pageNumber+1],
 		}
 
 		if previous.Number == 0 {
@@ -193,10 +225,14 @@ func main() {
 			next.Path = imageFilePathInCollectionNext
 		}
 
+		instances := index.Phrase[pageNumber]
+		qul.RenderInstances(index, instances, metadataAyahByVerseKey, *imagesInCollection)
+
 		templateData := TemplateData{
-			Previous: previous,
-			Current:  current,
-			Next:     next,
+			Previous:  previous,
+			Current:   current,
+			Next:      next,
+			Instances: instances,
 		}
 
 		templateErrorMessage := "execute template %s with data %+v: %v"
@@ -226,12 +262,174 @@ func main() {
 			pageTags,
 		)
 
-		noteIdBase := fmt.Sprintf("%d_%s_%d", model.ID, *mushafId, pageNumber)
-		note.ID = qul.GenerateID(noteIdBase)
-		deck.AddNote(note)
+		note.ID, err = qul.GenerateID(
+			"note",
+			strconv.FormatInt(model.ID, 10),
+			*mushafId,
+			strconv.Itoa(pageNumber),
+		)
+		if err != nil {
+			log.Fatalf("generate note id: %v", err)
+		}
+
+		versePosition := index.PageVerse[pageNumber]
+		verseKey := fmt.Sprintf("%d:%d", versePosition.Chapter, versePosition.Verse)
+
+		juz, ok := index.Juz[verseKey]
+		if !ok {
+			log.Fatalf("lookup juz for page %d, verse %s", pageNumber, verseKey)
+		}
+
+		hizb, ok := index.Hizb[verseKey]
+		if !ok {
+			log.Fatalf("lookup hizb for page %d, verse %s", pageNumber, verseKey)
+		}
+
+		rub, ok := index.Rub[verseKey]
+		if !ok {
+			log.Fatalf("lookup rub for page %d, verse %s", pageNumber, verseKey)
+		}
+
+		rootID := strconv.FormatInt(*deckId, 10)
+
+		juzName := fmt.Sprintf(
+			"%s::%s",
+			*deckName,
+			fmt.Sprintf(*deckJuzNameFormat, juz),
+		)
+
+		hizbName := fmt.Sprintf(
+			"%s::%s",
+			juzName,
+			fmt.Sprintf(*deckHizbNameFormat, hizb),
+		)
+
+		rubName := fmt.Sprintf(
+			"%s::%s",
+			hizbName,
+			fmt.Sprintf(*deckRubNameFormat, rub),
+		)
+
+		pageName := fmt.Sprintf(
+			"%s::%s",
+			rubName,
+			fmt.Sprintf(*deckPageNameFormat, pageNumber),
+		)
+
+		juzDeckID, err := qul.GenerateID(
+			"deck",
+			rootID,
+			*mushafId,
+			"juz",
+			strconv.Itoa(juz),
+		)
+		if err != nil {
+			log.Fatalf("generate juz deck id: %v", err)
+		}
+
+		getDeck(
+			decksMap,
+			deckID(juzDeckID),
+			juzName,
+			fmt.Sprintf(*deckJuzDescriptionFormat, juz),
+		)
+
+		hizbDeckID, err := qul.GenerateID(
+			"deck",
+			rootID,
+			*mushafId,
+			"juz",
+			strconv.Itoa(juz),
+			"hizb",
+			strconv.Itoa(hizb),
+		)
+		if err != nil {
+			log.Fatalf("generate hizb deck id: %v", err)
+		}
+
+		getDeck(
+			decksMap,
+			deckID(hizbDeckID),
+			hizbName,
+			fmt.Sprintf(*deckHizbDescriptionFormat, hizb),
+		)
+
+		rubDeckID, err := qul.GenerateID(
+			"deck",
+			rootID,
+			*mushafId,
+			"juz",
+			strconv.Itoa(juz),
+			"hizb",
+			strconv.Itoa(hizb),
+			"rub",
+			strconv.Itoa(rub),
+		)
+		if err != nil {
+			log.Fatalf("generate rub deck id: %v", err)
+		}
+
+		getDeck(
+			decksMap,
+			deckID(rubDeckID),
+			rubName,
+			fmt.Sprintf(*deckRubDescriptionFormat, rub),
+		)
+
+		pageDeckID, err := qul.GenerateID(
+			"deck",
+			rootID,
+			*mushafId,
+			"juz",
+			strconv.Itoa(juz),
+			"hizb",
+			strconv.Itoa(hizb),
+			"rub",
+			strconv.Itoa(rub),
+			"page",
+			strconv.Itoa(pageNumber),
+		)
+		if err != nil {
+			log.Fatalf("generate page deck id: %v", err)
+		}
+
+		pageDeck := getDeck(
+			decksMap,
+			deckID(pageDeckID),
+			pageName,
+			fmt.Sprintf(*deckPageDescriptionFormat, pageNumber),
+		)
+
+		pageDeck.AddNote(note)
 	}
 
-	pkg := genanki.NewPackage([]*genanki.Deck{deck}).AddModel(model)
+	decks := slices.SortedFunc(
+		maps.Values(decksMap),
+		compareDecks,
+	)
+
+	pkg := genanki.NewPackage(decks).AddModel(model)
+
+	var mediaEntries []MediaEntry
+
+	if *mediaConfigPath != "" {
+		mediaConfigDir := filepath.Dir(*mediaConfigPath)
+
+		mediaConfigData, err := os.ReadFile(*mediaConfigPath)
+		if err != nil {
+			log.Fatalf("read media config: %v", err)
+		}
+
+		if err := yaml.Unmarshal(mediaConfigData, &mediaEntries); err != nil {
+			log.Fatalf("parse media config: %v", err)
+		}
+
+		for _, mediaEntry := range mediaEntries {
+			src := filepath.Join(mediaConfigDir, mediaEntry.Src)
+			as := mediaEntry.As
+			mediaFiles[src] = as
+		}
+	}
 
 	for src, as := range mediaFiles {
 		mediaFileData, err := os.ReadFile(src)

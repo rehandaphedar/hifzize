@@ -1,6 +1,8 @@
-git.sr.ht/~rehandaphedar/genanki-go-utils/v2 v2.0.0 h1:uCXlM39obqoHmXbX4m1kdim+MPD3lEVo9L0/ki9Eu68=
-git.sr.ht/~rehandaphedar/genanki-go-utils/v2 v2.0.0/go.mod h1:GoY+C5fsxUqzbzlyaP82prSJF6rPy32MTADW7r4LGSM=
-github.com/mattn/go-sqlite3 v1.14.34 h1:3NtcvcUnFBPsuRcno8pUtupspG/GM+9nZ88zgJcp6Zk=
-github.com/mattn/go-sqlite3 v1.14.34/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
+git.sr.ht/~rehandaphedar/genanki-go-utils/v4 v4.0.0 h1:i2WvLX4hHXmh/O7RlKPiPPHVl1TXE/2FVx5KL1bHEJ0=
+git.sr.ht/~rehandaphedar/genanki-go-utils/v4 v4.0.0/go.mod h1:he1pQLcVCMJHgNeNVU6IuYS0D4UmG/V4e97c0pL6o4U=
+github.com/mattn/go-sqlite3 v1.14.50 h1:dmdFvo1XG4MPzA4IkAmE9upVz/Nj31uRoM5+jC8hYbY=
+github.com/mattn/go-sqlite3 v1.14.50/go.mod h1:6JTjA44L93a0QCyJef5YvlPoKXntQPjzWv5gtm9sB6w=
 github.com/npcnixel/genanki-go v0.0.0-20260305182613-460b4074eb38 h1:Rtx1wOMaSAzV966Evc6TBzVcEqmf9kxPYwdnuRyXxog=
 github.com/npcnixel/genanki-go v0.0.0-20260305182613-460b4074eb38/go.mod h1:W1FEWpdtv1QOKhnSMvYQmyqqmCnlXr6HsAxVW060zvA=
+go.yaml.in/yaml/v4 v4.0.0-rc.6 h1:1h7H1ohdUh93/FyE4YaDa1Zh64K6VVbjF4K6WUxMtH4=
+go.yaml.in/yaml/v4 v4.0.0-rc.6/go.mod h1:aZqd9kCMsGL7AuUv/m/PvWLdg5sjJsZ4oHDEnfPPfY0=

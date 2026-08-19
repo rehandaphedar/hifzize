@@ -1,17 +1,58 @@
-html {
-	overflow-y: scroll;
-	text-align: center;
+@font-face {
+	font-family: "KFGQPC HAFS Uthmanic Script";
+	src: url("_kfgqpc-hafs-uthmanic-script.ttf");
 }
 
-hr {
-	background: currentColor;
-	opacity: 0.2;
-	height: 2px;
+html {
+	overflow-y: scroll;
+}
 
-	border: none;
+.quran-text {
+	margin: 8px 0;
+
+	font-family: "KFGQPC HAFS Uthmanic Script", serif;
+	direction: rtl;
+	text-align: right;
+
+	font-size: 32px;
+	line-height: 2;
+}
+
+.continuation {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.phrase {
+	font-weight: bold;
+}
+
+.verse-key,
+.instances-info,
+.instance-info {
+	text-align: center;
+	direction: ltr;
+}
+
+.verse-key {
+	font-size: 20px;
+}
+
+.instances-info {
+	font-size: 18px;
+}
+
+.instance-info {
+	font-size: 16px;
+}
+
+.instance {
+	background: rgba(0, 0, 0, 0.2);
+	margin: 48px 0;
+	padding: 16px;
 }
 
 .page {
+	text-align: center;
 	margin: 4px auto;
 }
 
@@ -31,4 +72,16 @@ hr {
 		transparent 50%,
 		transparent 100%
 	);
+}
+
+a {
+	color: inherit;
+}
+
+hr {
+	background: currentColor;
+	opacity: 0.2;
+	height: 2px;
+
+	border: none;
 }

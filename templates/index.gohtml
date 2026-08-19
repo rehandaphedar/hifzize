@@ -1,13 +1,41 @@
 <!-- Front -->
 {{ define "front" }}
-<div class="page previous">{{ template "page" .Previous }}</div>
+<a href="tarteel://ayah/{{ .Previous.Chapter }}/{{ .Previous.Verse }}">
+	<div class="page previous">{{ template "page" .Previous }}</div>
+</a>
 {{ end }}
 
 <!-- Back -->
 {{ define "back" }}
-<div class="page previous">{{ template "page" .Previous }}</div>
-<div class="page current">{{ template "page" .Current }}</div>
-<div class="page next">{{ template "page" .Next}}</div>
+<a href="tarteel://ayah/{{ .Previous.Chapter }}/{{ .Previous.Verse }}">
+	<div class="page previous">{{ template "page" .Previous }}</div>
+</a>
+<a href="tarteel://ayah/{{ .Current.Chapter }}/{{ .Current.Verse }}">
+	<div class="page current">{{ template "page" .Current }}</div>
+</a>
+<a href="tarteel://ayah/{{ .Next.Chapter }}/{{ .Next.Verse }}">
+	<div class="page next">{{ template "page" .Next}}</div>
+</a>
+<hr />
+<div class="instances">
+	{{ range .Instances }}
+	<div class="instance">
+		<a href="tarteel://ayah/{{ .Chapter }}/{{ .Verse }}">
+			<div class="instance-info">
+				{{ .Chapter }}:{{ .Verse }} (Instance {{ .InstanceInVerse }} in verse)
+			</div>
+			<div class="quran-text">
+				{{ template "context" .Context}}
+				<!-- . -->
+				{{ template "phrase" .Phrase}}
+				<!-- . -->
+				{{ template "continuation" .Continuation}}
+				<!-- . -->
+			</div>
+		</a>
+	</div>
+	{{end }}
+</div>
 {{ end }}
 
 <!-- Page -->
@@ -30,6 +58,30 @@
 <!-- Conclusion -->
 {{ if eq .Type 3 }}
 <span> The Conclusion Of The Qurʾān </span>
+{{ end }}
+<!--  -->
+{{ end }}
+
+<!-- Context -->
+{{ define "context" }}
+<span class="context"> {{ template "range" . }} </span>
+{{ end }}
+
+<!-- Phrase -->
+{{ define "phrase" }}
+<span class="phrase"> {{ template "range" . }} </span>
+{{ end }}
+
+<!-- Continuation -->
+{{ define "continuation" }}
+<span class="continuation"> {{ template "range" . }} </span>
+{{ end }}
+
+<!-- Range -->
+{{ define "range" }}
+<!--  -->
+{{ range . }}
+<span class="quran-word"> {{ . }} </span>
 {{ end }}
 <!--  -->
 {{ end }}
